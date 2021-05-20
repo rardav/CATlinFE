@@ -1,0 +1,27 @@
+.navbar{
+    background-color: #14213D;
+    color: #E5E5E5;
+}
+
+#btn-signup{
+    background-color: #FCA311;
+    color: #14213D;
+    border-color: #14213D;
+}
+
+#btn-login{
+    color: #E5E5E5;
+    border-color: #E5E5E5;
+}
+
+#btn-login:hover{
+    background-color: #E5E5E5;
+    color: #14213D;
+    border-color: #14213D;
+}
+
+#btn-signup:hover{
+    background-color: #14213D;
+    color: #FCA311;
+    border-color: #FCA311;
+}

@@ -6,11 +6,25 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NavComponent } from './nav/nav.component'
 import { FormsModule } from '@angular/forms';
+import { HomeComponent } from './home/home.component';
+import { RegisterComponent } from './register/register.component';
+import { LoginComponent } from './login/login.component';
+import { FooterComponent } from './footer/footer.component';
+import { AboutComponent } from './about/about.component';
+import { ExamListComponent } from './catalogue/exam-list/exam-list.component';
+import { ExamDetailComponent } from './catalogue/exam-detail/exam-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavComponent
+    NavComponent,
+    HomeComponent,
+    RegisterComponent,
+    LoginComponent,
+    FooterComponent,
+    AboutComponent,
+    ExamListComponent,
+    ExamDetailComponent,
   ],
   imports: [
     BrowserModule,
