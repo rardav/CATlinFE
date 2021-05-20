@@ -1,37 +1,30 @@
-<form #loginForm="ngForm" autocomplete="off">
-    <div class="mb-3">
-        <label for="firstNameInput" class="form-label">First name</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          id="firstNameInput" >
-      </div>
-      <div class="mb-3">
-        <label for="lastNameInput" class="form-label">Last name</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          id="lastNameInput" >
-      </div>
-    <div class="mb-3">
-      <label for="exampleInputEmail1" class="form-label">Email address</label>
-      <input 
-        type="email" 
-        class="form-control" 
-        id="exampleInputEmail1" 
-        aria-describedby="emailHelp">
-    </div>
-    <div class="mb-3">
-      <label for="exampleInputPassword1" class="form-label">Password</label>
-      <input 
-      type="password" 
-      class="form-control" 
-      id="exampleInputPassword1">
-    </div>
-    <div class="mb-3">
-      <button type="Login" class="btn btn-primary">Sign up</button>
-    </div>
-    <a class="navbar-brand" href="#">Already have an account? Log in!</a>
-    
-  </form>
-  
+<form #registerForm="ngForm" (ngSubmit)="register()" autocomplete="off">
+  <h2 class="text-center text-primary">Get started</h2>
+  <hr>
+  <div class="mb-3">
+    <label for="firstNameInput" class="form-label">First name</label>
+    <input type="text" class="form-control" name="firstNameInput" [(ngModel)]="model.firstName">
+  </div>
+  <div class="mb-3">
+    <label for="lastNameInput" class="form-label">Last name</label>
+    <input type="text" class="form-control" name="lastNameInput" [(ngModel)]="model.lastName">
+  </div>
+  <div class="mb-3">
+    <label for="emailInput" class="form-label">Email address</label>
+    <input type="email" class="form-control" name="emailInput" [(ngModel)]="model.email">
+  </div>
+  <div class="mb-3">
+    <label for="passwordInput" class="form-label">Password</label>
+    <input type="password" class="form-control" name="passwordInput" [(ngModel)]="model.password">
+  </div>
+  <div class="mb-3">
+    <label for="confirmPasswordInput" class="form-label">Confirm password</label>
+    <input type="password" class="form-control" name="confirmPasswordInput" [(ngModel)]="model.confirmPassword">
+  </div>
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary">Sign up</button>
+    <button type="button" class="btn btn-primary" (click)="cancel()">Cancel</button>
+  </div>
+  <a class="navbar-brand" href="#">Already have an account? Log in!</a>
+
+</form>

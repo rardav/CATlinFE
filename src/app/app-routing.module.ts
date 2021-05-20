@@ -5,6 +5,7 @@ import { ExamDetailComponent } from './catalogue/exam-detail/exam-detail.compone
 import { ExamListComponent } from './catalogue/exam-list/exam-list.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
+import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent},
   { path: 'login', component: LoginComponent},
   { path: 'register', component: RegisterComponent},
+  { path: 'users/:id', component: ProfileComponent},
   { path: '**', component: HomeComponent, pathMatch: 'full'}
 ];
 
