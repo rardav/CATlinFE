@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { AccountService } from '../_services/account.service';
+import { UsersService } from '../_services/users.service';
 
 @Component({
   selector: 'app-nav',
@@ -10,24 +11,27 @@ import { AccountService } from '../_services/account.service';
 })
 export class NavComponent implements OnInit {
   model: any = {}
+  user: User;
   currentUser$: Observable<User>
 
-  constructor(private accountService: AccountService) { }
+  constructor(public accountService: AccountService, private userService: UsersService) { }
 
   ngOnInit(): void {
-    this.currentUser$ = this.accountService.currentUser$;
+    this.getCurrentUserData();
   }
 
-  login() {
-    this.accountService.login(this.model).subscribe(response => {
-      console.log(response);
-    }, error => {
-      console.log(error);
+  private getCurrentUserData() {
+    this.currentUser$ = this.accountService.currentUser$;
+    this.currentUser$.subscribe(user => {
+      if (!!user) {
+        this.loadUser(user.email);
+      }
     });
   }
 
-  logout() {
-    this.accountService.logout();
+  loadUser(email: string) {
+    this.userService.getUser(email).subscribe(user => {
+      this.user = user;
+    })
   }
-
 }

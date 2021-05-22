@@ -3,7 +3,7 @@
     <span class="ml-auto mr-3 order-lg-last">
         <button class="btn btn-outline-success ml-auto mr-2" id="btn-login" routerLink='/login' *ngIf="(currentUser$ | async) === null">Log in</button>
         <button class="btn btn-outline-success ml-auto mr-3" id="btn-signup" routerLink='/register' *ngIf="(currentUser$ | async) === null">Sign up</button>
-        <button class="btn btn-outline-success ml-auto mr-3" id="btn-currentUser" routerLink='/users/1' *ngIf="currentUser$ | async">current user</button>
+        <button class="btn btn-outline-success ml-auto mr-3" id="btn-currentUser" routerLink='/users/1' *ngIf="user && currentUser$ | async">{{user.firstName}} {{user.lastName}}</button>
     </span>
     
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
