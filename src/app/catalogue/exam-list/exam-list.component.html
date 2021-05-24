@@ -1,7 +1,18 @@
-<div class="row">
-    <ul>
-        <li *ngFor="let exam of exams">
-            {{exam.title}}
-        </li>
-    </ul>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div *ngFor="let exam of exams">
+                <p>{{exam.subject}}</p>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="card-columns">
+                <div *ngFor="let exam of exams" class="card" >
+                    <a routerLink="/catalogue/{{exam.urlTitle}}">
+                        <app-exam-card [exam]="exam"></app-exam-card>
+                    </a> 
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,1 +1,11 @@
-<p>exam-detail works!</p>
+<div *ngIf="!startedTest" class="container1">
+    <h1 *ngIf="exam">{{exam.title}}</h1>
+    <button *ngIf="currentUser$ | async" (click)="advanceToTest()">dak vezi asta hopa potz sa dai testu</button>
+</div>
+
+<div *ngIf="startedTest" class="container2">
+    <h1>esti sigur ca dai testu?</h1>
+    <p>info despre test</p>
+    <button routerLink="/catalogue/{{exam.urlTitle}}/in-progress">da dau testu</button>
+</div>
+

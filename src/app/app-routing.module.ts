@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { ExamDetailComponent } from './catalogue/exam-detail/exam-detail.component';
+import { ExamInProgressComponent } from './catalogue/exam-in-progress/exam-in-progress.component';
 import { ExamListComponent } from './catalogue/exam-list/exam-list.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
@@ -14,7 +15,8 @@ import { RegisterComponent } from './register/register.component';
 const routes: Routes = [
   { path: '', component: HomeComponent},
   { path: 'catalogue', component: ExamListComponent},
-  { path: 'catalogue/:id', component: ExamDetailComponent},
+  { path: 'catalogue/:title', component: ExamDetailComponent},
+  { path: 'catalogue/:title/in-progress', component: ExamInProgressComponent},
   { path: 'about', component: AboutComponent},
   { path: 'login', component: LoginComponent},
   { path: 'register', component: RegisterComponent},

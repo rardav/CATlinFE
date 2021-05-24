@@ -15,4 +15,8 @@ export class ExamsService {
     return this.http.get<Exam[]>(this.baseUrl + 'questionnaires');
   }
 
+  getExam(title: string) {
+    return this.http.get<Exam>(this.baseUrl + 'questionnaires/' + title); 
+  }
+
 }

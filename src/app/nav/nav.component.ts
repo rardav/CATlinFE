@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { AccountService } from '../_services/account.service';
+import { NavbarService } from '../_services/navbar.service';
 import { UsersService } from '../_services/users.service';
 
 @Component({
@@ -14,7 +15,9 @@ export class NavComponent implements OnInit {
   user: User;
   currentUser$: Observable<User>
 
-  constructor(public accountService: AccountService, private userService: UsersService) { }
+  constructor(public accountService: AccountService, 
+    private userService: UsersService,
+    public navService: NavbarService) { }
 
   ngOnInit(): void {
     this.getCurrentUserData();
