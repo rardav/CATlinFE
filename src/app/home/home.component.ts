@@ -10,5 +10,8 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    if (localStorage.getItem('currentIndividualSession') !== null) {
+      localStorage.removeItem('currentIndividualSession');
+    }
   }
 }

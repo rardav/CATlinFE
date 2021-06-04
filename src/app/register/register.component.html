@@ -10,6 +10,14 @@
     <input type="text" class="form-control" name="lastNameInput" [(ngModel)]="model.lastName">
   </div>
   <div class="mb-3">
+    <label for="exampleFormControlSelect1">Role</label>
+    <select class="form-control" id="exampleFormControlSelect1">
+      <option selected>Choose one</option>
+      <option>Examinee</option>
+      <option>Supervisor</option>
+    </select>
+  </div>
+  <div class="mb-3">
     <label for="emailInput" class="form-label">Email address</label>
     <input type="email" class="form-control" name="emailInput" [(ngModel)]="model.email">
   </div>

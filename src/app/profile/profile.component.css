@@ -1,0 +1,15 @@
+tr:hover {
+    cursor: pointer;
+}
+
+table tr:nth-child(2){
+    counter-reset: rowNumber;
+}
+
+table tr{
+    counter-increment: rowNumber;
+}
+
+.counter::before {
+    content: counter(rowNumber);
+}

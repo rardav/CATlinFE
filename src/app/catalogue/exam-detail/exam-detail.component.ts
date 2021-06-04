@@ -15,11 +15,13 @@ export class ExamDetailComponent implements OnInit {
   exam: Exam;
   currentUser$: Observable<User>;
   startedTest: boolean = false;
+  accesskey: string;
+  isSupervisor: boolean = true;
 
   constructor(private examService: ExamsService, 
     private route: ActivatedRoute, 
-    private accountService: AccountService) {
-     }
+    private accountService: AccountService,
+    private router: Router) {}
 
   ngOnInit(): void {
     this.getCurrentUser();
@@ -38,7 +40,27 @@ export class ExamDetailComponent implements OnInit {
 
   advanceToTest() {
     this.startedTest = true;
-    console.log("aa");
   }
+
+  advanceToSessionBeginning() {
+    this.accesskey = this.generateAccessKey(6);
+    this.startedTest = true;
+  }
+
+  startTest(){
+    this.examService.currentExam = this.exam;
+    this.router.navigateByUrl('/catalogue/' + this.exam.urlTitle + '/in-progress');
+  }
+
+  generateAccessKey(length: number) {
+    var result           = [];
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result.push(characters.charAt(Math.floor(Math.random() * 
+ charactersLength)));
+   }
+   return result.join('');
+}
 
 }

@@ -24,6 +24,11 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { ExamCardComponent } from './catalogue/exam-card/exam-card.component';
 import { ExamInProgressComponent } from './catalogue/exam-in-progress/exam-in-progress.component';
+import { QuestionComponent } from './catalogue/exam/question/question.component';
+import { AnswerComponent } from './catalogue/exam/answer/answer.component';
+import { TimerComponent } from './catalogue/exam/timer/timer.component';
+import { ResultsComponent } from './catalogue/results/results.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -42,14 +47,19 @@ import { ExamInProgressComponent } from './catalogue/exam-in-progress/exam-in-pr
     ServerErrorComponent,
     ExamCardComponent,
     ExamInProgressComponent,
+    QuestionComponent,
+    AnswerComponent,
+    TimerComponent,
+    ResultsComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    ChartsModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    SharedModule
+    SharedModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

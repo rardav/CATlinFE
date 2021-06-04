@@ -1,11 +1,51 @@
-<div *ngIf="!startedTest" class="container1">
-    <h1 *ngIf="exam">{{exam.title}}</h1>
-    <button *ngIf="currentUser$ | async" (click)="advanceToTest()">dak vezi asta hopa potz sa dai testu</button>
+
+<div *ngIf="!isSupervisor" class="examinee-container">
+    <div *ngIf="!startedTest" class="container1">
+        <h1 *ngIf="exam">{{exam.title}}</h1>
+        <div *ngIf="currentUser$ | async" class="logged-in-container">
+            <p>You need an access key to start this exam. Your supervisor should provide you with one.</p>
+            <div class="mb-3">
+                <label for="accessKeyInput" class="form-label">Access key</label>
+                <input type="text" class="form-control" name="accessKeyInput" >
+              </div>
+            <button  (click)="advanceToTest()">Advance</button>
+        </div>
+    </div>
+    
+    <div *ngIf="startedTest" class="container2">
+        <h1>You may begin your examination now.</h1>
+        <p>This test may take up to ... minutes to complete. Be sure to be in a quiet room with no distractions and bla bla bla. </p>
+        <button (click)="startTest()">Start</button>
+    </div>
 </div>
 
-<div *ngIf="startedTest" class="container2">
-    <h1>esti sigur ca dai testu?</h1>
-    <p>info despre test</p>
-    <button routerLink="/catalogue/{{exam.urlTitle}}/in-progress">da dau testu</button>
+<div *ngIf="isSupervisor" class="supervisor-container">
+    <div *ngIf="!startedTest" class="container1">
+        <h1 *ngIf="exam">{{exam.title}}</h1>
+        <div *ngIf="currentUser$ | async" class="logged-in-container">
+            <p>You can start a new session by generating an access key.</p>
+            <div class="form-group">
+                <label for="sessionLength">Choose the length of the session (in minutes):</label>
+                <select class="form-control" id="sessionLength">
+                  <option>10</option>
+                  <option>20</option>
+                  <option>30</option>
+                  <option>45</option>
+                  <option>60</option>
+                </select>
+              </div>
+            <button  (click)="advanceToSessionBeginning()">Start a session</button>
+        </div>
+    </div>
+    <div *ngIf="startedTest" class="container2">
+        <h1>Your session just started.</h1>
+        <p> Send the access key to your examinees. They can begin their examination until <span></span>. </p>
+        <h1>{{accesskey}}</h1>
+    </div>
 </div>
+
+<div class="not-logged-in-container">
+    <p *ngIf="(currentUser$ | async) === null">You must be logged in to take this exam.</p>
+</div>
+
 

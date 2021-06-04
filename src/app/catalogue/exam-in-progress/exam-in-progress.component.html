@@ -1,14 +1,14 @@
-<div class="question-container">intrebare</div>
-
-<div class="answers-container">
-    <div class="answer answer1">rasp1</div>
-    <div class="answer answer2">rasp2</div>
-    <div class="answer answer3">rasp3</div>
-    <div class="answer answer4">rasp4</div>
+<p *ngIf="user && currentUser$ | async">{{user.firstName}} {{user.lastName}}</p>
+<app-question [question]="currentQuestion"></app-question>
+<div class="answers">
+    <div *ngFor="let answer of currentAnswers" [ngStyle] = "{'backgroundColor': chosenAnswer.id === answer.id ? 'red' : 'white'}">
+        <app-answer 
+        (onAnswerChosen)="getChosenAnswerData($event)" 
+        [answer]="answer">
+    </app-answer>
+    </div>
+    
 </div>
-
-<button> next</button>
-
-<div>timp ramas intrebare: 02:00</div>
-
-<button (click)="stopTest()" routerLink="/">stop test</button>
+<app-timer></app-timer>
+<button *ngIf="standardError>0.2" type="button" (click)="onNextClick()">Next</button>
+<button *ngIf="standardError<=0.2" type="button" (click)="onFinishClick()">Finish</button>

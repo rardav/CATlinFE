@@ -14,4 +14,8 @@ export class UsersService {
   getUser(email: string) {
     return this.http.get<User>(this.baseUrl + 'users/' + email);
   }
+
+  getId(email: string) {
+    return this.http.get<number>(this.baseUrl + 'users/' + email + '/properties/id');
+  }
 }
