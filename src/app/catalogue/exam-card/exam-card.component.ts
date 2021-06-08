@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Exam } from 'src/app/_models/exam';
+import { ImagesService } from 'src/app/_services/images.service';
 
 @Component({
   selector: 'app-exam-card',
@@ -8,10 +9,22 @@ import { Exam } from 'src/app/_models/exam';
 })
 export class ExamCardComponent implements OnInit {
   @Input() exam: Exam;
+  imageUrl: string;
 
-  constructor() { }
+  constructor(private imageService: ImagesService) { }
 
   ngOnInit(): void {
+    console.log(this.exam);
+    if(this.exam.imageId !== 0) {
+      this.loadImage(this.exam.imageId);
+    } 
+
+  }
+
+  loadImage(id: number) {
+    this.imageService.getImage(id).subscribe( image => {
+      this.imageUrl = image.url;
+    })
   }
 
 }

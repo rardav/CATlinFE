@@ -29,6 +29,8 @@ import { AnswerComponent } from './catalogue/exam/answer/answer.component';
 import { TimerComponent } from './catalogue/exam/timer/timer.component';
 import { ResultsComponent } from './catalogue/results/results.component';
 import { ChartsModule } from 'ng2-charts';
+import { NgxSpinnerModule } from 'ngx-spinner'
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 
 @NgModule({
   declarations: [
@@ -60,10 +62,12 @@ import { ChartsModule } from 'ng2-charts';
     HttpClientModule,
     FormsModule,
     SharedModule,
+    NgxSpinnerModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })

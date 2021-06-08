@@ -1,51 +1,82 @@
+<div class="loggedin-container" *ngIf="currentUser$ | async">
+    <div class="examinee-container" *ngIf="(currentUser$ | async).roleId===1">
+        <div class="examineenotavailable-container" *ngIf="numberOfQuestions===0">
+            <h1 *ngIf="exam">{{exam.title}}</h1>
+            <p *ngIf="exam">{{exam.description}}</p>
+            <p>This exam is currently unavailable. Come back later or try another exam.</p>
+        </div>
 
-<div *ngIf="!isSupervisor" class="examinee-container">
-    <div *ngIf="!startedTest" class="container1">
-        <h1 *ngIf="exam">{{exam.title}}</h1>
-        <div *ngIf="currentUser$ | async" class="logged-in-container">
-            <p>You need an access key to start this exam. Your supervisor should provide you with one.</p>
-            <div class="mb-3">
-                <label for="accessKeyInput" class="form-label">Access key</label>
-                <input type="text" class="form-control" name="accessKeyInput" >
-              </div>
-            <button  (click)="advanceToTest()">Advance</button>
+        <div class="examineeavailable-container" *ngIf="numberOfQuestions>0">
+            <div class="examineeavailable-firstview" *ngIf="!startedTest">
+                <h1 *ngIf="exam">{{exam.title}}</h1>
+                <p *ngIf="exam">{{exam.description}}</p>
+                <p>You need an access key to start this exam. Your supervisor should provide you with one.</p>
+                <div class="mb-3">
+                    <label for="accessKeyInput" class="form-label">Access key</label>
+                    <input type="text" class="form-control" name="accessKeyInput" [(ngModel)]="examineeAccessKey">
+                </div>
+                <button (click)="advanceToTest()">Advance</button>
+            </div>
+
+            <div class="examineeavailable-secondview" *ngIf="startedTest">
+                <p>Your supervisor is: {{supervisorName}}</p>
+                <h1>You may begin your examination now.</h1>
+                <p>This test may take up to ... minutes to complete. Be sure to be in a quiet room with no distractions
+                    and bla bla bla. </p>
+                <button (click)="startTest()">Start</button>
+            </div>
         </div>
     </div>
-    
-    <div *ngIf="startedTest" class="container2">
-        <h1>You may begin your examination now.</h1>
-        <p>This test may take up to ... minutes to complete. Be sure to be in a quiet room with no distractions and bla bla bla. </p>
-        <button (click)="startTest()">Start</button>
-    </div>
-</div>
 
-<div *ngIf="isSupervisor" class="supervisor-container">
-    <div *ngIf="!startedTest" class="container1">
-        <h1 *ngIf="exam">{{exam.title}}</h1>
-        <div *ngIf="currentUser$ | async" class="logged-in-container">
-            <p>You can start a new session by generating an access key.</p>
-            <div class="form-group">
-                <label for="sessionLength">Choose the length of the session (in minutes):</label>
-                <select class="form-control" id="sessionLength">
-                  <option>10</option>
-                  <option>20</option>
-                  <option>30</option>
-                  <option>45</option>
-                  <option>60</option>
-                </select>
-              </div>
-            <button  (click)="advanceToSessionBeginning()">Start a session</button>
+    <div class="supervisor-container" *ngIf="(currentUser$ | async).roleId===2">
+        <div class="supervisoravailable-container" *ngIf="numberOfQuestions>0">
+            <div class="supervisorsessionnotstarted-container" *ngIf="!objectInsideLocalStorage && startedTest === false">
+                <h1 *ngIf="exam">{{exam.title}}</h1>
+                <p *ngIf="exam">{{exam.description}}</p>
+                <p>You can start a new session by generating an access key.</p>
+                <div class="form-group">
+                    <label for="sessionLength">Choose the length of the session (in minutes):</label>
+                    <select class="form-control" id="sessionLength" [(ngModel)]="selectedLength">
+                        <option>1</option>
+                        <option>10</option>
+                        <option>20</option>
+                        <option>30</option>
+                        <option>45</option>
+                        <option>60</option>
+                    </select>
+                </div>
+                <button (click)="advanceToSessionBeginning()">Start a session</button>
+            </div>
+
+            <div class="supervisorsessionalreadystarted-container" *ngIf="objectInsideLocalStorage || startedTest">
+                <h1>Your session just started.</h1>
+                <p> Send the access key to your examinees. They can begin their examination until
+                    <span *ngIf="openedSessionLocalStorage">{{openedSessionLocalStorage.endTime |
+                        date: 'HH:mm:ss'}}</span>.
+                </p>
+                <h1 *ngIf="openedSessionLocalStorage">{{openedSessionLocalStorage.accessKey}}</h1>
+            </div>
         </div>
-    </div>
-    <div *ngIf="startedTest" class="container2">
-        <h1>Your session just started.</h1>
-        <p> Send the access key to your examinees. They can begin their examination until <span></span>. </p>
-        <h1>{{accesskey}}</h1>
+
+        <div class="supervisornotavailable-container" *ngIf="numberOfQuestions===0">
+            <h1 *ngIf="exam">{{exam.title}}</h1>
+            <p *ngIf="exam">{{exam.description}}</p>
+            <p>This exam is currently unavailable. Come back later or try another exam.</p>
+        </div>
+
     </div>
 </div>
 
-<div class="not-logged-in-container">
-    <p *ngIf="(currentUser$ | async) === null">You must be logged in to take this exam.</p>
+<div class="notloggedin-container" *ngIf="(currentUser$ | async) === null">
+    <div class="examineenotavailable-container" *ngIf="numberOfQuestions===0">
+        <h1 *ngIf="exam">{{exam.title}}</h1>
+        <p *ngIf="exam">{{exam.description}}</p>
+        <p>This exam is currently unavailable. Come back later or try another exam.</p>
+    </div>
+
+    <div class="examineeavailable-container" *ngIf="numberOfQuestions>0">
+        <h1 *ngIf="exam">{{exam.title}}</h1>
+        <p *ngIf="exam">{{exam.description}}</p>
+        <p>You must be logged in to take this exam.</p>
+    </div>
 </div>
-
-

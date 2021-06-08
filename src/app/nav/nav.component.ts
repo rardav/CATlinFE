@@ -33,7 +33,7 @@ export class NavComponent implements OnInit {
   }
 
   loadUser(email: string) {
-    this.userService.getUser(email).subscribe(user => {
+    this.userService.getUserByEmail(email).subscribe(user => {
       this.user = user;
     })
   }

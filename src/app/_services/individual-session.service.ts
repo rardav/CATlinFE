@@ -19,6 +19,10 @@ export class IndividualSessionService {
     return this.http.get<IndividualSession[]>(this.baseUrl + 'users/' + id + '/individualsessions');
   }
 
+  getIndividualSessionsFromSession(id: number) {
+    return this.http.get<IndividualSession[]>(this.baseUrl + 'sessions/' + id + '/individualsessions');
+  }
+
   getIdOfIndividualSession(sessionId: number, userId: number) {
     return this.http.get<number>(this.baseUrl + 'sessions/' + sessionId + '/users/' + userId + '/individualsessions/id');
   }

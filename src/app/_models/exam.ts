@@ -3,4 +3,5 @@ export interface Exam {
     subject: string;
     description: string;
     urlTitle: string;
+    imageId: number;
 }

@@ -9,6 +9,9 @@ import { ExamsService } from 'src/app/_services/exams.service';
 })
 export class ExamListComponent implements OnInit {
   exams: Exam[];
+  subjects: Set<string> = new Set();
+  visibleExams: Exam[];
+  objectInsideLocalStorage: string;
 
   constructor(private examsService: ExamsService) { }
 
@@ -19,7 +22,37 @@ export class ExamListComponent implements OnInit {
   loadExams() {
     this.examsService.getExams().subscribe(exams => {
       this.exams = exams;
+      this.visibleExams = exams;
+
+      let sortedSubjects: string[] = [];
+      exams.forEach(exam => {
+        sortedSubjects.push(exam.subject);
+      });
+      sortedSubjects.sort();
+      sortedSubjects.forEach(subject => {
+        this.subjects.add(subject);
+      })
     })
+  }
+
+  onClick(exam: Exam) {
+    this.objectInsideLocalStorage = localStorage.getItem('session_' + exam.urlTitle);
+    if (this.objectInsideLocalStorage) {
+      let obj = JSON.parse(this.objectInsideLocalStorage);
+      let now = new Date();
+      if (now.getTime() > new Date(obj.endTime).getTime()) {
+        localStorage.removeItem('session_' +  exam.urlTitle);
+      }
+    }
+  }
+
+  onSubjectClick(element){
+    this.visibleExams = [];
+    if(element.textContent === 'All'){
+      this.visibleExams = this.exams;
+    } else {
+      this.visibleExams = this.exams.filter(exam => exam.subject === element.textContent);
+    }
   }
 
 }

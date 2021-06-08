@@ -21,12 +21,16 @@ export class ExamsService {
     return this.http.get<Exam[]>(this.baseUrl + 'questionnaires');
   }
 
-  getExam(title: string){
-    return this.http.get<Exam>(this.baseUrl + 'questionnaires/title/' + title); 
+  getExam(title: string) {
+    return this.http.get<Exam>(this.baseUrl + 'questionnaires/title/' + title);
   }
 
-   getExamById(id: number){
-     return this.http.get<Exam>(this.baseUrl + 'questionnaires/id/' + id); 
-   }
+  getExamById(id: number) {
+    return this.http.get<Exam>(this.baseUrl + 'questionnaires/id/' + id);
+  }
+
+  getExamIdByTitle(title: string) {
+    return this.http.get<number>(this.baseUrl + 'questionnaires/' + title + '/id');
+  }
 
 }

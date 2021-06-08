@@ -12,20 +12,29 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
+import { AuthGuard } from './_guards/auth.guard';
+import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
+  {
+    path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'catalogue/:title/in-progress', component: ExamInProgressComponent, canDeactivate: [PreventUnsavedChangesGuard]},
+      { path: 'users/:id', component: ProfileComponent},
+      { path: 'catalogue/:title/in-progress/results', component: ResultsComponent}
+    ]
+  },
   { path: 'catalogue', component: ExamListComponent},
   { path: 'catalogue/:title', component: ExamDetailComponent},
-  { path: 'catalogue/:title/in-progress', component: ExamInProgressComponent},
   { path: 'about', component: AboutComponent},
   { path: 'login', component: LoginComponent},
   { path: 'register', component: RegisterComponent},
-  { path: 'users/:id', component: ProfileComponent},
   { path: 'errors', component: TestErrorsComponent},
   { path: 'not-found', component: NotFoundComponent},
-  { path: 'server-error', component: ServerErrorComponent},  
-  { path: 'catalogue/:title/in-progress/results', component: ResultsComponent}, 
+  { path: 'server-error', component: ServerErrorComponent}, 
   { path: '**', component: NotFoundComponent, pathMatch: 'full'}
 ];
 

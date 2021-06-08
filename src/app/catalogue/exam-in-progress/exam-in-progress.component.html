@@ -3,9 +3,9 @@
 <div class="answers">
     <div *ngFor="let answer of currentAnswers" [ngStyle] = "{'backgroundColor': chosenAnswer.id === answer.id ? 'red' : 'white'}">
         <app-answer 
-        (onAnswerChosen)="getChosenAnswerData($event)" 
-        [answer]="answer">
-    </app-answer>
+            (onAnswerChosen)="getChosenAnswerData($event)" 
+            [answer]="answer">
+        </app-answer>
     </div>
     
 </div>

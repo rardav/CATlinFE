@@ -17,3 +17,7 @@
 .card:hover {
     background-color: #FCA311;
 }
+
+button:focus {
+    background-color: #FCA311;
+}

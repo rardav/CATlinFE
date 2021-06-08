@@ -1,54 +1,100 @@
-<h1>My attempts</h1>
-<p>Click on row to get details</p>
-<table class="table table-hover" *ngIf="individualSessionsData.length>0">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Session ID</th>
-        <th scope="col">Exam</th>
-        <th scope="col">Taken on</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of individualSessionsData" data-toggle="modal" data-target=".bd-example-modal-lg" (click)="onRowClick(data.individualSession.sessionId)">
-        <td class="counter"></td>
-        <td *ngIf="data.individualSession">{{data.individualSession.sessionId}}</td>
-        <td *ngIf="data.exam">{{data.exam.title}}</td>
-        <td *ngIf="data.individualSession">{{data.individualSession.startTime}}</td>
-      </tr>
-    </tbody>
-  </table>
+<div class="examinee-container" *ngIf="(currentUser$ | async).roleId===1">
+  <div class="withsessions-container" *ngIf="individualSessionsData.length>0">
+    <h1>My attempts</h1>
+    <p>Click on a row to get details of your performance.</p>
+    <table class="table table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Session ID</th>
+          <th scope="col">Exam</th>
+          <th scope="col">Taken on</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of individualSessionsData" data-toggle="modal" data-target=".bd-example-modal-lg"
+          (click)="onExamineeRowClick(data.individualSession.sessionId)">
+          <td class="counter"></td>
+          <td *ngIf="data.individualSession">{{data.individualSession.sessionId}}</td>
+          <td *ngIf="data.exam">{{data.exam.title}}</td>
+          <td *ngIf="data.individualSession">{{data.individualSession.startTime}}</td>
+        </tr>
+      </tbody>
+    </table>
 
 
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
 
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-    
-      <p>your mark: {{mark}}</p>
+          <p>your mark: {{mark}}</p>
 
-      <div *ngIf="lineChartReady" class="chart-wrapper">
-        <canvas baseChart 
-            [datasets]="lineChartData" 
-            [labels]="lineChartLabels" 
-            [options]="lineChartOptions"
-            [colors]="lineChartColors" 
-            [legend]="lineChartLegend" 
-            [chartType]="lineChartType" 
-            [plugins]="lineChartPlugins">
-        </canvas>
-    </div>
-    
-    <div *ngIf="doughnutChartReady" class="chart-wrapper">
-        <canvas baseChart 
-            [data]="doughnutChartData"
-            [labels]="doughnutChartLabels"
-            [chartType]="doughnutChartType">
-        </canvas>
-    </div>
+          <div *ngIf="lineChartReady" class="chart-wrapper">
+            <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+              [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
+              [plugins]="lineChartPlugins">
+            </canvas>
+          </div>
 
+          <div *ngIf="doughnutChartReady" class="chart-wrapper">
+            <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType">
+            </canvas>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="withsessions-container" *ngIf="individualSessionsData.length===0">
+    <h1>You currently do not have any attempts.</h1>
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="logout()" routerLink="/">Log out</button>
+
 </div>
 
-<button type="button" class="btn btn-primary" (click)="logout()" routerLink="/">Log out</button>
+<div class="supervisor-container" *ngIf="(currentUser$ | async).roleId===2">
+  <div class="withsessions-container" *ngIf="sessionsData.sessions.length>0">
+    <h1>My sessions</h1>
+    <p>Click on a row to get a report on the performance of your examinees.</p>
+    <table class="table table-hover" data-toggle="table" data-pagination="true" data-page-size="1">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">ID</th>
+          <th scope="col">Exam</th>
+          <th scope="col">Started on</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let session of sessionsData.sessions; let i=index" data-toggle="modal"
+          data-target=".bd-example-modal-lg"  (click)="onSupervisorRowClick(sessionsData.ids[i])">
+          <td class="counter"></td>
+          <td *ngIf="sessionsData.ids">{{sessionsData.ids[i]}}</td>
+          <td *ngIf="sessionsData.exams[i]">{{sessionsData.exams[i].title}}</td>
+          <td *ngIf="session">{{session.startTime}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div>
+            <p *ngFor="let session of indivSessions; let i=index">
+              <span *ngIf="examinees[i]">{{examinees[i].firstName}} </span><span *ngIf="examinees[i]">{{examinees[i].lastName}} </span> - <span *ngIf="examinees[i]"> {{examinees[i].email}}:</span> <span *ngIf="session"> {{session.ability}}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="withsessions-container" *ngIf="sessionsData.sessions.length===0">
+    <h1>You currently do not have any sessions.</h1>
+  </div>
+
+  <button type="button" class="btn btn-primary" (click)="logout()" routerLink="/">Log out</button>
+</div>

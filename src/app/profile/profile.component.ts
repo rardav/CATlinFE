@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartDataSets, ChartType } from 'chart.js';
 import { Color, Label, MultiDataSet } from 'ng2-charts';
-import { Observable } from 'rxjs';
-import { AnsweredQuestion } from '../_models/answered-question';
+import { Observable, VirtualTimeScheduler } from 'rxjs';
 import { Exam } from '../_models/exam';
 import { IndividualSession } from '../_models/individual-session';
 import { IndividualSessionData } from '../_models/individual-session-data';
 import { Session } from '../_models/session';
+import { SessionData } from '../_models/session-data';
 import { User } from '../_models/user';
 import { AccountService } from '../_services/account.service';
 import { AnsweredQuestionsService } from '../_services/answered-questions.service';
@@ -26,11 +26,18 @@ export class ProfileComponent implements OnInit {
   userId: number;
   counter: number = 0;
   individualSessionsData: IndividualSessionData[] = [];
+  sessionsData: SessionData = {
+    sessions: [],
+    exams: [],
+    ids: []
+  };
   mark: number = 0;
 
   indivSessions: IndividualSession[] = [];
+  examinees: User[] = [];
   exams: Exam[] = [];
-  sessions: Session[] = [];
+  examineeSessions: Session[] = [];
+  supervisorSessions: Session[] = [];
 
 
   lineChartLabels: Label[] = [];
@@ -60,47 +67,62 @@ export class ProfileComponent implements OnInit {
     private userService: UsersService,
     private examService: ExamsService,
     private sessionService: SessionService,
-    private answeredQuestionService: AnsweredQuestionsService) { }
+    private answeredQuestionService: AnsweredQuestionsService) {
+     }
 
   ngOnInit(): void {
-    this.getCurrentUserData()
+    let currUser = JSON.parse(localStorage.getItem('user'));
+    if (currUser.roleId === 1) {
+      this.getCurrentExamineeData()
+    } 
+    if (currUser.roleId === 2) {
+      this.getCurrentSupervisorData();
+    }
   }
 
-  onRowClick(sessionId: number) {
+  onExamineeRowClick(sessionId: number) {
     this.mark = this.individualSessionsData.find(data => data.individualSession.sessionId === sessionId).individualSession.ability;
 
     this.individualSessionService.getIdOfIndividualSession(sessionId, this.userId).subscribe(id => {
       this.answeredQuestionService.getAnsweredQuestions(id).subscribe(questions => {
-        if(questions){
-        
+        if (questions) {
+
           questions.sort((a, b) => a.numberOfOrder < b.numberOfOrder ? -1 : (a.numberOfOrder > b.numberOfOrder ? 1 : 0))
 
-        this.lineChartLabels = questions.map(question => (questions.indexOf(question)+1).toString());
+          this.lineChartLabels = questions.map(question => (questions.indexOf(question) + 1).toString());
 
-         this.lineChartData = [
-          { data: questions.map(question => question.questionDifficulty),
-            label: 'Difficulty levels of administered questions',
-            fill: false },
-        ];
+          this.lineChartData = [
+            {
+              data: questions.map(question => question.questionDifficulty),
+              label: 'Difficulty levels of administered questions',
+              fill: false
+            },
+          ];
           this.doughnutChartData = [
-          [questions.filter(x => x.answeredCorrectly === 1).length,
+            [questions.filter(x => x.answeredCorrectly === 1).length,
             questions.filter(x => x.answeredCorrectly === 0).length]
-        ];
+          ];
 
-        this.doughnutChartReady = true;
-        this.lineChartReady = true;
-        
-      
-      }
+          this.doughnutChartReady = true;
+          this.lineChartReady = true;
+        }
       })
     })
   }
+
+  onSupervisorRowClick(sessionId:number){
+    this.examinees = [];
+    this.indivSessions = [];
+    this.loadIndividualSessionsFromSession(sessionId);
+  }
+
+
 
   logout() {
     this.accountService.logout();
   }
 
-  private getCurrentUserData() {
+  private getCurrentExamineeData() {
     this.currentUser$ = this.accountService.currentUser$;
     this.currentUser$.subscribe(user => {
       if (user) {
@@ -110,20 +132,39 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  loadUser(email: string) {
-    this.userService.getUser(email).subscribe(user => {
+  private getCurrentSupervisorData() {
+    this.currentUser$ = this.accountService.currentUser$;
+    this.currentUser$.subscribe(user => {
       if (user) {
         this.user = user;
-        this.loadId(this.user.email);
+        this.loadSupervisorId(this.user.email);
+      }
+    });
+  }
+
+  loadUser(email: string) {
+    this.userService.getUserByEmail(email).subscribe(user => {
+      if (user) {
+        this.user = user;
+        this.loadExamineeId(this.user.email);
       }
     })
   }
 
-  loadId(email: string) {
+  loadExamineeId(email: string) {
     this.userService.getId(email).subscribe(id => {
       if (id) {
         this.userId = id;
         this.loadIndividualSessions(this.userId);
+      }
+    })
+  }
+
+  loadSupervisorId(email: string) {
+    this.userService.getId(email).subscribe(id => {
+      if (id) {
+        this.userId = id;
+        this.loadSessions(this.userId);
       }
     })
   }
@@ -133,18 +174,62 @@ export class ProfileComponent implements OnInit {
       if (sessions) {
         sessions.forEach(session => {
           this.indivSessions.push(session);
+          console.log(session);
           this.loadSession(session.sessionId);
         });
       }
     })
   }
 
+  loadIndividualSessionsFromSession(id: number) {
+    this.individualSessionService.getIndividualSessionsFromSession(id).subscribe(sessions => {
+      if (sessions) {
+        sessions.forEach(session => {
+          this.indivSessions.push(session);
+          this.loadExamineeFromIndividualSession(session);
+        });
+      }
+    })
+  }
+
+  private loadExamineeFromIndividualSession(session: IndividualSession) {
+    this.userService.getUserById(session.examineeId).subscribe(examinee => {
+      this.examinees.push(examinee);
+    });
+  }
+
   loadSession(id: number) {
-    this.sessionService.getSession(id).subscribe(session => {
+    this.sessionService.getSessionById(id).subscribe(session => {
       if (session) {
-        this.sessions.push(session);
+        this.examineeSessions.push(session);
         this.loadExam(session.questionnaireId);
       }
+    })
+  }
+
+  loadSessions(id: number) {
+    this.sessionService.getSessions(id).subscribe(sessions => {
+      if (sessions) {
+        sessions.sort().reverse();
+        sessions.forEach( session => {
+          this.sessionsData.sessions.push(session)
+          this.loadSupervisorExam(session);
+        })
+      }
+    })
+  }
+
+  private loadSupervisorExam(session: Session) {
+    this.examService.getExamById(session.questionnaireId).subscribe( exam => {
+      this.sessionsData.exams.push(exam);
+      this.loadSessionId(session.accessKey) 
+    });
+  }
+
+  loadSessionId(accessKey: string) {
+    this.sessionService.getIdByAccessKey(accessKey).subscribe(id => {
+      this.sessionsData.ids.push(id)
+      this.sessionsData.ids.sort().reverse();
     })
   }
 
@@ -152,7 +237,7 @@ export class ProfileComponent implements OnInit {
     this.examService.getExamById(id).subscribe(exam => {
       if (exam) {
         this.exams.push(exam);
-        let data: IndividualSessionData = ({ individualSession: this.indivSessions[this.counter], session: this.sessions[this.counter], exam: this.exams[this.counter] });
+        let data: IndividualSessionData = ({ individualSession: this.indivSessions[this.counter], session: this.examineeSessions[this.counter], exam: this.exams[this.counter] });
         this.counter++;
         this.individualSessionsData.push(data);
       }

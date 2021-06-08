@@ -11,8 +11,12 @@ export class UsersService {
 
   constructor(private http: HttpClient) { }
 
-  getUser(email: string) {
-    return this.http.get<User>(this.baseUrl + 'users/' + email);
+  getUserByEmail(email: string) {
+    return this.http.get<User>(this.baseUrl + 'users/email/' + email);
+  }
+
+  getUserById(id: number) {
+    return this.http.get<User>(this.baseUrl + 'users/id/' + id);
   }
 
   getId(email: string) {

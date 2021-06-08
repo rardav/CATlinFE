@@ -11,13 +11,12 @@ import { AccountService } from '../_services/account.service';
 export class AuthGuard implements CanActivate {
   constructor(private accountService: AccountService, private toastr: ToastrService) {}
   
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> {
+  canActivate(): Observable<boolean> {
     return this.accountService.currentUser$.pipe(
       map(user => {
         if (user) return true;
-        this.toastr.error('Not allowed');
+        this.toastr.error('You must be logged in to access this area.');
+        return false;
       })
     )
   }

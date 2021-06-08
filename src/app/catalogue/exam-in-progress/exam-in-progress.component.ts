@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { Answer } from 'src/app/_models/answer';
@@ -25,6 +25,11 @@ import { UsersService } from 'src/app/_services/users.service';
 })
 
 export class ExamInProgressComponent implements OnInit {
+  @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
+    if(this.finishedExamination === false) $event.returnValue = true; 
+    else $event.returnValue = false;
+  }
+  
   individualSession: IndividualSession = {} as IndividualSession;
   user: User;
   userId: number;
@@ -38,6 +43,7 @@ export class ExamInProgressComponent implements OnInit {
   startTime: string;
   endTime: string;
   @Input() examTitle: string;
+  finishedExamination: boolean = false;
 
   // IRT
   theta: number;
@@ -62,15 +68,14 @@ export class ExamInProgressComponent implements OnInit {
     private irt: IrtService,
     private toastr: ToastrService,
     private examService: ExamsService,
-    private answeredQuestionService: AnsweredQuestionsService) {
+    private answeredQuestionService: AnsweredQuestionsService,
+    private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
     this.navService.hide();
 
     this.startNewSession();
-
-    this.startTime = formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss', 'en-us');
   }
 
   private startNewSession() {
@@ -83,22 +88,8 @@ export class ExamInProgressComponent implements OnInit {
     this.D = this.irt.calculateD(this.difficulty, this.theta, this.sigmaSquare);
     this.phi = this.irt.calculateOrdinateValueOfNormalCurveAtPointD(this.D);
 
-    this.startTime = formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss', 'en-us')
+    this.startTime = formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-us')
 
-    // if (localStorage.getItem('currentIndividualSession') === null) {
-    //   this.individualSession = <IndividualSession>{
-    //     ability: this.theta,
-    //     standardError: this.sigmaSquare,
-    //     startTime: formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss', 'en-us'),
-    //     examineeId: 1,
-    //     sessionId: 1
-    //   };
-
-    //   localStorage.setItem('currentIndividualSession', JSON.stringify(this.individualSession));
-    // }
-
-    // let json = localStorage.getItem('currentIndividualSession');
-    // this.individualSession = JSON.parse(json);
     this.loadData();
   }
 
@@ -129,6 +120,11 @@ export class ExamInProgressComponent implements OnInit {
     this.currentAnswers = this.answers.filter(answer => answer.questionId === this.currentQuestion.id);
     this.shuffle(this.currentAnswers);
 
+    console.log(this.standardError);
+    if (this.standardError<=0.2) {
+      this.finishedExamination = true;
+    }
+
   }
 
   onFinishClick() {
@@ -142,7 +138,7 @@ export class ExamInProgressComponent implements OnInit {
       this.theta = this.irt.calculateWrongAnswerTheta(this.theta, this.sigmaSquare, this.phi, this.Phi);
     }
 
-    this.endTime = formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss', 'en-us');
+    this.endTime = formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-us');
     
     
     this.examService.answeredQuestions = this.usedQuestions;
@@ -154,6 +150,8 @@ export class ExamInProgressComponent implements OnInit {
     if (mark < 1 ) mark = 1;
 
     this.examService.currentMark = mark;
+    let sessionId = JSON.parse(localStorage.getItem('currentSessionId-'+this.route.snapshot.paramMap.get('title')));
+    localStorage.removeItem(localStorage.getItem('currentSessionId-'+this.route.snapshot.paramMap.get('title')));
 
     //create and send individual session
     this.individualSession = <IndividualSession>{
@@ -162,7 +160,7 @@ export class ExamInProgressComponent implements OnInit {
       startTime: this.startTime,
       endTime: this.endTime,
       examineeId: this.userId,
-      sessionId: 1
+      sessionId: sessionId
     };
     let individualSessionId: number;
 
@@ -215,7 +213,7 @@ export class ExamInProgressComponent implements OnInit {
   }
 
   loadUser(email: string) {
-    this.userService.getUser(email).subscribe(user => {
+    this.userService.getUserByEmail(email).subscribe(user => {
       this.user = user;
     })
   }
@@ -267,7 +265,7 @@ export class ExamInProgressComponent implements OnInit {
     let fitQuestions = this.questions.filter(q => q.difficulty < level + precision).filter(q => q.difficulty > level - precision).filter(q => !this.usedQuestions.includes(q));
     let nextQuestion = fitQuestions[Math.floor(Math.random() * fitQuestions.length)];
     this.usedQuestions.push(nextQuestion);
-    console.log('difficulty ' + nextQuestion.difficulty)
+    //console.log('difficulty ' + nextQuestion.difficulty)
 
     return nextQuestion;
   }

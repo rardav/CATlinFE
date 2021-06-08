@@ -3,4 +3,5 @@ export interface Question {
     text: string;
     timeToAnswer: number;
     difficulty: number;
+    photoId: number;
 }
