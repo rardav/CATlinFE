@@ -1,3 +1,12 @@
-<nav class="navbar navbar-light footer" style="position: relative; bottom:0; width: 100% !important;">
-    <a class="navbar-brand" href="#">Footer</a>
+<nav *ngIf="navService.visible" class="navbar navbar-light footer" style="position: relative; bottom:0; width: 100% !important;">
+    <p>CATlin is the future of testing.<p>
+    <span>
+        <a routerLink="/">
+            <img src="../../assets/images/logo/2.png" alt="logo">
+        </a>
+    </span>
+    <div>
+        <a href="https://storyset.com">Illustrations by Storyset</a>
+    </div>
+
 </nav>

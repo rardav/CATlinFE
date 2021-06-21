@@ -23,7 +23,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'catalogue/:title/in-progress', component: ExamInProgressComponent, canDeactivate: [PreventUnsavedChangesGuard]},
-      { path: 'users/:id', component: ProfileComponent},
+      { path: 'profile', component: ProfileComponent},
       { path: 'catalogue/:title/in-progress/results', component: ResultsComponent}
     ]
   },

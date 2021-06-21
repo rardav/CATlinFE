@@ -1,82 +1,432 @@
-<div class="loggedin-container" *ngIf="currentUser$ | async">
-    <div class="examinee-container" *ngIf="(currentUser$ | async).roleId===1">
+<section>
+    <div class="loggedin-container" *ngIf="currentUser$ | async">
+        <div class="examinee-container" *ngIf="(currentUser$ | async).roleId===1">
+            <div class="examineenotavailable-container" *ngIf="numberOfQuestions===0">
+                <h1 class="title" *ngIf="exam">{{exam.title}}</h1>
+                <div class="description" *ngIf="exam">
+                    <p>{{exam.description}}
+                    </p>
+                </div>
+                <div class="not-available">
+                    <p>This exam is not available yet. Try another one or come back later.</p>
+                </div>
+            </div>
+
+            <div class="examineeavailable-container" *ngIf="numberOfQuestions>0">
+                <div class="examineeavailable-firstview" *ngIf="!startedTest">
+                    <h1 class="title" *ngIf="exam">{{exam.title}}</h1>
+                    <div class="description" *ngIf="exam">
+                        <p>{{exam.description}}
+                        </p>
+                    </div>
+                    <div class="access-key-needed">
+                        <p>You need an access key to start this exam. Your supervisor should provide you with one.</p>
+                        <div class="mb-3">
+                            <label for="accessKeyInput" class="form-label">Got an access key? Insert it here.</label>
+                            <input type="text" class="form-control" name="accessKeyInput"
+                                [(ngModel)]="examineeAccessKey">
+                            <button class="btn btn-primary" (click)="advanceToTest()">Advance</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="examineeavailable-secondview" *ngIf="startedTest">
+                    <p>Your supervisor is: {{supervisorName}}</p>
+                    <h1>You may begin your examination now.</h1>
+                    <p>This test may take up to ... minutes to complete. Be sure to be in a quiet room with no
+                        distractions
+                        and bla bla bla. </p>
+                    <button (click)="startTest()">Start</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="supervisor-container" *ngIf="(currentUser$ | async).roleId===2">
+            <div class="supervisoravailable-container" *ngIf="numberOfQuestions>0">
+                <div class="supervisorsessionnotstarted-container"
+                    *ngIf="!objectInsideLocalStorage && startedTest === false">
+                    <h1 class="title" *ngIf="exam">{{exam.title}}</h1>
+                    <div class="description" *ngIf="exam">
+                        <p>{{exam.description}}
+                        </p>
+                    </div>
+                    <div class="generate-access-key">
+                        <p>You can start a new session by generating an access key.</p>
+                        <div class="form-group">
+                            <label for="sessionLength">Choose the length of the session (in minutes):</label>
+                            <select class="form-control" id="sessionLength" [(ngModel)]="selectedLength">
+                                <option>10</option>
+                                <option>20</option>
+                                <option>30</option>
+                                <option>45</option>
+                                <option>60</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" (click)="advanceToSessionBeginning()">Start a session</button>
+                    </div>
+                </div>
+
+                <div class="supervisorsessionalreadystarted-container" *ngIf="objectInsideLocalStorage || startedTest">
+                    <h1>Your session just started.</h1>
+                    <div class="generated-access-key">
+                        <p> Send this access key to your examinees.</p> 
+                        <h1 *ngIf="openedSessionLocalStorage">{{openedSessionLocalStorage.accessKey}}</h1>
+                    </div>
+                    <div 
+                        class="deadline" 
+                        *ngIf="openedSessionLocalStorage">
+                        <p>They can begin their examination until</p> 
+                        <h3>{{openedSessionLocalStorage.endTime |date: 'HH:mm:ss'}}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="supervisornotavailable-container" *ngIf="numberOfQuestions===0">
+                <h1 class="title" *ngIf="exam">{{exam.title}}</h1>
+                <div class="description" *ngIf="exam">
+                    <p>{{exam.description}}
+                    </p>
+                </div>
+                <div class="not-available">
+                    <p>This exam is not available yet. Try another one or come back later.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="administrator-container" *ngIf="(currentUser$ | async).roleId===10002">
+            <div class="administratorfirstview-container" *ngIf="startedUpdate === false">
+                <h1 class="title" *ngIf="exam">{{exam.title}}</h1>
+                <div class="description" *ngIf="exam">
+                    <p>{{exam.description}}
+                    </p>
+                </div>
+                <button (click)="advanceToExamUpdating()">Update this quiz</button>
+            </div>
+
+            <div class="administratorsecondview-container" *ngIf="startedUpdate === true">
+                <h1 *ngIf="exam">{{exam.title}}</h1>
+                <div class="withquestions-container" *ngIf="numberOfQuestions>0">
+                    <h2>My added questions</h2>
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width: 8%;">#</th>
+                                    <th scope="col" style="width: 12%;">ID</th>
+                                    <th scope="col" style="width: 58%;">Text</th>
+                                    <th scope="col" style="width: 20%;">Difficulty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let question of administratorQuestions" data-toggle="modal"
+                                    data-target="#updateModal" (click)="onAdministratorRowClick(question)">
+                                    <td class="counter"></td>
+                                    <td>{{question.id}}</td>
+                                    <td>{{question.text}}</td>
+                                    <td>{{question.difficulty}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                            aria-labelledby="myLargeModalLabel" aria-hidden="true" id="updateModal">
+                            <div class="modal-dialog modal-lg">
+                                <div *ngIf="questionToBeUpdated" class="modal-content">
+                                    <form
+                                        *ngIf="correctAnswerOfQuestionToBeUpdated && wrongAnswersOfQuestionToBeUpdated.length > 0 && imageOfQuestionToBeUpdated"
+                                        [formGroup]='updateForm' (ngSubmit)='updateForm.valid'>
+
+                                        <div class="mb-3">
+                                            <div class="imageOfQuestionToBeUpdated-container">
+                                                <p *ngIf="imageOfQuestionToBeUpdated.url === null" class="card-img">This
+                                                    question has no image</p>
+                                                <img *ngIf="imageOfQuestionToBeUpdated.url !== null" class="card-img"
+                                                    src="{{imageOfQuestionToBeUpdated.url}}"
+                                                    alt="Image could not be loaded.">
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="question" class="form-label">
+                                                Question
+                                            </label>
+                                            <textarea class="form-control" formControlName="question" rows="6"
+                                                [(ngModel)]="questionToBeUpdated.text">
+                                            </textarea>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="difficulty" class="form-label">
+                                                Difficulty
+                                            </label>
+                                            <div>
+                                                {{questionToBeUpdated.difficulty}}
+                                            </div>
+                                            <input type="range" class="form-range" min="-2.5" max="2.5" step="0.01"
+                                                formControlName="difficulty"
+                                                [(ngModel)]="questionToBeUpdated.difficulty">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="timeToAnswer" class="form-label">
+                                                Time to answer
+                                            </label>
+                                            <div>
+                                                {{questionToBeUpdated.timeToAnswer}}
+                                            </div>
+                                            <input type="range" class="form-range" min="30" max="300" step="10"
+                                                formControlName="timeToAnswer"
+                                                [(ngModel)]="questionToBeUpdated.timeToAnswer">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="correctAnswer" class="form-label">
+                                                Correct answer
+                                            </label>
+                                            <textarea class="form-control" formControlName="correctAnswer" rows="2"
+                                                [(ngModel)]="correctAnswerOfQuestionToBeUpdated.text">
+                                            </textarea>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="wrongAnswer1" class="form-label">
+                                                Wrong answer
+                                            </label>
+                                            <textarea class="form-control" formControlName="wrongAnswer1" rows="2"
+                                                [(ngModel)]="wrongAnswersOfQuestionToBeUpdated[0].text">
+                                            </textarea>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="wrongAnswer2" class="form-label">
+                                                Wrong answer
+                                            </label>
+                                            <textarea class="form-control" formControlName="wrongAnswer2" rows="2"
+                                                [(ngModel)]="wrongAnswersOfQuestionToBeUpdated[1].text">
+                                            </textarea>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="wrongAnswer3" class="form-label">
+                                                Wrong answer
+                                            </label>
+                                            <textarea class="form-control" formControlName="wrongAnswer3" rows="2"
+                                                [(ngModel)]="wrongAnswersOfQuestionToBeUpdated[2].text">
+                                            </textarea>
+                                        </div>
+
+                                        <div *ngIf="updateForm.invalid">
+                                            All fields must be filled.
+                                        </div>
+                                        <button type="submit" class="btn btn-primary" data-dismiss="modal"
+                                            [disabled]="updateForm.invalid" (click)="onUpdateQuestion()">
+                                            Update question
+                                        </button>
+                                        <button type="submit" class="btn btn-primary" data-dismiss="modal"
+                                            (click)="onDeleteQuestion()">
+                                            Delete question
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button data-toggle="modal" data-target="#addModal" class="btn btn-primary"
+                        (click)="onOpenAddModal()">
+                        Add a question
+                    </button>
+                    <div id="addModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <form [formGroup]='addForm' (ngSubmit)='addForm.valid' *ngIf="questionToBeAdded">
+
+                                    <div class="mb-3">
+                                        <label for="question" class="form-label">
+                                            Question
+                                        </label>
+                                        <textarea class="form-control" formControlName="question" rows="6"
+                                            [(ngModel)]="questionToBeAdded.text">
+                                        </textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="difficulty" class="form-label">
+                                            Difficulty
+                                        </label>
+                                        <div>
+                                            {{questionToBeAdded.difficulty}}
+                                        </div>
+                                        <input type="range" class="form-range" min="-2.5" max="2.5" step="0.01"
+                                            formControlName="difficulty" [(ngModel)]="questionToBeAdded.difficulty">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="timeToAnswer" class="form-label">
+                                            Time to answer
+                                        </label>
+                                        <div>
+                                            {{questionToBeAdded.timeToAnswer}}
+                                        </div>
+                                        <input type="range" class="form-range" min="30" max="300" step="10"
+                                            formControlName="timeToAnswer" [(ngModel)]="questionToBeAdded.timeToAnswer">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="correctAnswer" class="form-label">
+                                            Correct answer
+                                        </label>
+                                        <textarea class="form-control" formControlName="correctAnswer" rows="2"
+                                            [(ngModel)]="correctAnswerOfQuestionToBeAdded.text">
+                                        </textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="wrongAnswer1" class="form-label">
+                                            Wrong answer
+                                        </label>
+                                        <textarea class="form-control" formControlName="wrongAnswer1" rows="2"
+                                            [(ngModel)]="wrongAnswersOfQuestionToBeAdded[0].text">
+                                        </textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="wrongAnswer2" class="form-label">
+                                            Wrong answer
+                                        </label>
+                                        <textarea class="form-control" formControlName="wrongAnswer2" rows="2"
+                                            [(ngModel)]="wrongAnswersOfQuestionToBeAdded[1].text">
+                                        </textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="wrongAnswer3" class="form-label">
+                                            Wrong answer
+                                        </label>
+                                        <textarea class="form-control" formControlName="wrongAnswer3" rows="2"
+                                            [(ngModel)]="wrongAnswersOfQuestionToBeAdded[2].text">
+                                        </textarea>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-3">
+                                            <h3>Add question image</h3>
+
+                                            <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropzoneOver}"
+                                                (fileOver)="fileOverBase($event)" [uploader]="uploader"
+                                                class="card bg-faded p-3 text-center mb-3 my-drop-zone"
+                                                *ngIf="!uploader?.queue.length">
+                                                <i class="fa fa-upload fa-3x"></i>
+                                                Drop photo here
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-9" style="margin-bottom: 40px"
+                                            *ngIf="uploader?.queue.length">
+
+                                            <h3>Upload queue</h3>
+                                            <p>Queue length: {{ uploader?.queue?.length }}</p>
+
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="50%">Name</th>
+                                                        <th>Size</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let item of uploader.queue">
+                                                        <td><strong>{{ item?.file?.name }}</strong></td>
+                                                        <td *ngIf="uploader.options.isHTML5" nowrap>{{
+                                                            item?.file?.size/1024/1024 | number:'.2' }} MB
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <div>
+                                                <div>
+                                                    Queue progress:
+                                                    <div class="progress" style="">
+                                                        <div class="progress-bar" role="progressbar"
+                                                            [ngStyle]="{ 'width': uploader.progress + '%' }"></div>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-success btn-s"
+                                                    (click)="uploader.uploadAll()"
+                                                    [disabled]="!uploader.getNotUploadedItems().length">
+                                                    <span class="fa fa-upload"></span> Upload
+                                                </button>
+                                                <button type="button" class="btn btn-warning btn-s"
+                                                    (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+                                                    <span class="fa fa-ban"></span> Cancel
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-s"
+                                                    (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+                                                    <span class="fa fa-trash"></span> Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="addForm.invalid">
+                                        All fields must be filled.
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" data-dismiss="modal"
+                                        [disabled]="addForm.invalid" (click)="onAddQuestion()">
+                                        Add question
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="withquestions-container" *ngIf="numberOfQuestions===0">
+                    <p>You have not added any questions to this quiz yet.</p>
+                    <button class="button" data-toggle="modal" data-target="#addModal">
+                        Add a question
+                    </button>
+                    <div id="addModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                aaa
+                                <button>Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="notloggedin-container" *ngIf="(currentUser$ | async) === null">
         <div class="examineenotavailable-container" *ngIf="numberOfQuestions===0">
-            <h1 *ngIf="exam">{{exam.title}}</h1>
-            <p *ngIf="exam">{{exam.description}}</p>
-            <p>This exam is currently unavailable. Come back later or try another exam.</p>
+            <h1 class="title" *ngIf="exam">{{exam.title}}</h1>
+            <div class="description" *ngIf="exam">
+                <p>{{exam.description}}
+                </p>
+            </div>
+            <div class="not-available">
+                <p>This exam is not available yet. Try another one or come back later.</p>
+            </div>
         </div>
 
         <div class="examineeavailable-container" *ngIf="numberOfQuestions>0">
-            <div class="examineeavailable-firstview" *ngIf="!startedTest">
-                <h1 *ngIf="exam">{{exam.title}}</h1>
-                <p *ngIf="exam">{{exam.description}}</p>
-                <p>You need an access key to start this exam. Your supervisor should provide you with one.</p>
-                <div class="mb-3">
-                    <label for="accessKeyInput" class="form-label">Access key</label>
-                    <input type="text" class="form-control" name="accessKeyInput" [(ngModel)]="examineeAccessKey">
-                </div>
-                <button (click)="advanceToTest()">Advance</button>
-            </div>
-
-            <div class="examineeavailable-secondview" *ngIf="startedTest">
-                <p>Your supervisor is: {{supervisorName}}</p>
-                <h1>You may begin your examination now.</h1>
-                <p>This test may take up to ... minutes to complete. Be sure to be in a quiet room with no distractions
-                    and bla bla bla. </p>
-                <button (click)="startTest()">Start</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="supervisor-container" *ngIf="(currentUser$ | async).roleId===2">
-        <div class="supervisoravailable-container" *ngIf="numberOfQuestions>0">
-            <div class="supervisorsessionnotstarted-container" *ngIf="!objectInsideLocalStorage && startedTest === false">
-                <h1 *ngIf="exam">{{exam.title}}</h1>
-                <p *ngIf="exam">{{exam.description}}</p>
-                <p>You can start a new session by generating an access key.</p>
-                <div class="form-group">
-                    <label for="sessionLength">Choose the length of the session (in minutes):</label>
-                    <select class="form-control" id="sessionLength" [(ngModel)]="selectedLength">
-                        <option>1</option>
-                        <option>10</option>
-                        <option>20</option>
-                        <option>30</option>
-                        <option>45</option>
-                        <option>60</option>
-                    </select>
-                </div>
-                <button (click)="advanceToSessionBeginning()">Start a session</button>
-            </div>
-
-            <div class="supervisorsessionalreadystarted-container" *ngIf="objectInsideLocalStorage || startedTest">
-                <h1>Your session just started.</h1>
-                <p> Send the access key to your examinees. They can begin their examination until
-                    <span *ngIf="openedSessionLocalStorage">{{openedSessionLocalStorage.endTime |
-                        date: 'HH:mm:ss'}}</span>.
+            <h1 class="title" *ngIf="exam">{{exam.title}}</h1>
+            <div class="description" *ngIf="exam">
+                <p>{{exam.description}}
                 </p>
-                <h1 *ngIf="openedSessionLocalStorage">{{openedSessionLocalStorage.accessKey}}</h1>
+            </div>
+            <div class="people-took-exam">
+                <p style="margin: 0">Join</p>
+                <h2 style="margin: 0">10123</h2>
+                <p>people who took this exam.</p>
+            </div>
+            <div class="must-be-logged-in">
+                <p>You must be logged in to take this exam.</p>
             </div>
         </div>
-
-        <div class="supervisornotavailable-container" *ngIf="numberOfQuestions===0">
-            <h1 *ngIf="exam">{{exam.title}}</h1>
-            <p *ngIf="exam">{{exam.description}}</p>
-            <p>This exam is currently unavailable. Come back later or try another exam.</p>
-        </div>
-
     </div>
-</div>
-
-<div class="notloggedin-container" *ngIf="(currentUser$ | async) === null">
-    <div class="examineenotavailable-container" *ngIf="numberOfQuestions===0">
-        <h1 *ngIf="exam">{{exam.title}}</h1>
-        <p *ngIf="exam">{{exam.description}}</p>
-        <p>This exam is currently unavailable. Come back later or try another exam.</p>
-    </div>
-
-    <div class="examineeavailable-container" *ngIf="numberOfQuestions>0">
-        <h1 *ngIf="exam">{{exam.title}}</h1>
-        <p *ngIf="exam">{{exam.description}}</p>
-        <p>You must be logged in to take this exam.</p>
-    </div>
-</div>
+</section>

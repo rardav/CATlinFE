@@ -12,6 +12,14 @@ export class ImagesService {
   constructor(private http: HttpClient) { }
 
   getImage(id: number) {
-    return this.http.get<Image>(this.baseUrl + 'images/' + id);
+    return this.http.get<Image>(this.baseUrl + 'images/id/' + id);
+  }
+
+  getImageId(url: string) {
+    return this.http.get<number>(this.baseUrl + 'images/url/' + url + '/id');
+  }
+
+  insertImage(image: Image) {
+    return this.http.post<Image>(this.baseUrl + 'images', image); 
   }
 }

@@ -14,7 +14,6 @@ export class ExamCardComponent implements OnInit {
   constructor(private imageService: ImagesService) { }
 
   ngOnInit(): void {
-    console.log(this.exam);
     if(this.exam.imageId !== 0) {
       this.loadImage(this.exam.imageId);
     } 

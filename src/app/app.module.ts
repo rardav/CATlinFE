@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NavComponent } from './nav/nav.component'
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
@@ -14,7 +14,6 @@ import { AboutComponent } from './about/about.component';
 import { ExamListComponent } from './catalogue/exam-list/exam-list.component';
 import { ExamDetailComponent } from './catalogue/exam-detail/exam-detail.component';
 import { ProfileComponent } from './profile/profile.component';
-import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { SharedModule } from './_modules/shared.module';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
@@ -26,11 +25,11 @@ import { ExamCardComponent } from './catalogue/exam-card/exam-card.component';
 import { ExamInProgressComponent } from './catalogue/exam-in-progress/exam-in-progress.component';
 import { QuestionComponent } from './catalogue/exam/question/question.component';
 import { AnswerComponent } from './catalogue/exam/answer/answer.component';
-import { TimerComponent } from './catalogue/exam/timer/timer.component';
 import { ResultsComponent } from './catalogue/results/results.component';
 import { ChartsModule } from 'ng2-charts';
-import { NgxSpinnerModule } from 'ngx-spinner'
-import { LoadingInterceptor } from './_interceptors/loading.interceptor';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { CountdownModule } from 'ngx-countdown';
+import { NG_SCROLLBAR_OPTIONS } from 'ngx-scrollbar';
 
 @NgModule({
   declarations: [
@@ -51,23 +50,28 @@ import { LoadingInterceptor } from './_interceptors/loading.interceptor';
     ExamInProgressComponent,
     QuestionComponent,
     AnswerComponent,
-    TimerComponent,
     ResultsComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     ChartsModule,
+    CountdownModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     SharedModule,
     NgxSpinnerModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
+    {provide: NG_SCROLLBAR_OPTIONS,
+      useValue: {
+
+      }}
+    //{provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })

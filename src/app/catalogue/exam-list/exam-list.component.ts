@@ -53,6 +53,15 @@ export class ExamListComponent implements OnInit {
     } else {
       this.visibleExams = this.exams.filter(exam => exam.subject === element.textContent);
     }
+
+    //style
+    if(element.nodeName === "BUTTON") {
+      let isButtonAlreadyActive = element.parentElement.querySelector(".active");
+      if( isButtonAlreadyActive ) {
+        isButtonAlreadyActive.classList.remove("active");
+      }
+      element.className += " active";
+    }
   }
 
 }

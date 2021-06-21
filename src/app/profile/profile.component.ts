@@ -43,14 +43,24 @@ export class ProfileComponent implements OnInit {
   lineChartLabels: Label[] = [];
   doughnutChartLabels: Label[] = ['Correct answers', 'Wrong answers'];
   lineChartOptions = {
-    responsive: true
+    responsive: true,
+    maintainAspectRatio: false
+  };
+  doughnutChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false
   };
   lineChartColors: Color[] = [
     {
-      borderColor: 'black',
-      backgroundColor: 'rgba(255,255,0,0.28)',
+      borderColor: "#14213D",
+      backgroundColor: '#14213D',
     },
   ];
+  doughnutChartColors: Color[] = [
+    {
+      backgroundColor: ["#14213D","#FCA311"]
+    }
+  ]
   lineChartLegend = true;
   lineChartFill = false;
   lineChartPlugins = [];
@@ -77,6 +87,9 @@ export class ProfileComponent implements OnInit {
     } 
     if (currUser.roleId === 2) {
       this.getCurrentSupervisorData();
+    }
+    if (currUser.roleId === 10002) {
+      this.getCurrentAdministratorData();
     }
   }
 
@@ -142,6 +155,15 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  private getCurrentAdministratorData() {
+    this.currentUser$ = this.accountService.currentUser$;
+    this.currentUser$.subscribe(user => {
+      if (user) {
+        this.user = user;
+      }
+    });
+  }
+
   loadUser(email: string) {
     this.userService.getUserByEmail(email).subscribe(user => {
       if (user) {
@@ -171,10 +193,10 @@ export class ProfileComponent implements OnInit {
 
   loadIndividualSessions(id: number) {
     this.individualSessionService.getIndividualSessions(id).subscribe(sessions => {
+      sessions.sort().reverse();
       if (sessions) {
         sessions.forEach(session => {
           this.indivSessions.push(session);
-          console.log(session);
           this.loadSession(session.sessionId);
         });
       }
@@ -210,12 +232,13 @@ export class ProfileComponent implements OnInit {
   loadSessions(id: number) {
     this.sessionService.getSessions(id).subscribe(sessions => {
       if (sessions) {
-        sessions.sort().reverse();
+        console.log(sessions);
         sessions.forEach( session => {
           this.sessionsData.sessions.push(session)
           this.loadSupervisorExam(session);
         })
       }
+      console.log(this.sessionsData);
     })
   }
 
@@ -229,7 +252,7 @@ export class ProfileComponent implements OnInit {
   loadSessionId(accessKey: string) {
     this.sessionService.getIdByAccessKey(accessKey).subscribe(id => {
       this.sessionsData.ids.push(id)
-      this.sessionsData.ids.sort().reverse();
+      this.sessionsData.ids.sort(function(a, b){return a-b});
     })
   }
 

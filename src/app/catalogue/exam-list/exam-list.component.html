@@ -2,13 +2,12 @@
     <div class="row">
         <div class="col">
             <div class="list-group list-group-flush">
-                <h4 class="list-group-item">Languages</h4>
+                <h4 class="list-group-item list-title">Languages</h4>
                 <div class="btn-group-toggle" data-toggle="buttons">
-                    <button type="button" class="list-group-item list-group-item-action"
-                        (click)="onSubjectClick($event.target)" routerLinkActive='active'>All</button>
+                    <button type="button" class="list-group-item list-group-item-action active"
+                        (click)="onSubjectClick($event.target)">All</button>
                     <button *ngFor="let subject of subjects" type="button"
-                        class="list-group-item list-group-item-action" (click)="onSubjectClick($event.target)"
-                        routerLinkActive='active'>{{subject}}</button>
+                        class="list-group-item list-group-item-action" (click)="onSubjectClick($event.target)">{{subject}}</button>
                 </div>
             </div>
         </div>

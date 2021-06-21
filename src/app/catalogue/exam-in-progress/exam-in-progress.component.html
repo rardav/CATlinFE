@@ -1,14 +1,28 @@
-<p *ngIf="user && currentUser$ | async">{{user.firstName}} {{user.lastName}}</p>
-<app-question [question]="currentQuestion"></app-question>
-<div class="answers">
-    <div *ngFor="let answer of currentAnswers" [ngStyle] = "{'backgroundColor': chosenAnswer.id === answer.id ? 'red' : 'white'}">
-        <app-answer 
-            (onAnswerChosen)="getChosenAnswerData($event)" 
-            [answer]="answer">
-        </app-answer>
+<div class="container">
+    <div class="top-container">
+        <countdown 
+            *ngIf="currentQuestion" 
+            #countdown 
+            [config]="{leftTime: currentQuestion.timeToAnswer, format: 'mm:ss'}"
+            (event)="onTimerFinished($event)">
+        </countdown>
+        <span 
+            class="userName" *ngIf="user && currentUser$ | async">
+            {{user.firstName}} {{user.lastName}}
+        </span>
     </div>
-    
+    <app-question class="question" [question]="currentQuestion"></app-question>
+    <div class="answers">
+        <div class="answer" *ngFor="let answer of currentAnswers"
+            [ngStyle]="{'backgroundColor': chosenAnswer.id === answer.id ? '#FCA311' : '#14213D'}">
+            <app-answer (onAnswerChosen)="getChosenAnswerData($event)" [answer]="answer">
+            </app-answer>
+        </div>
+
+    </div>
+
+    <button class="btn btn-primary" *ngIf="standardError>0.2 &&  noOfQuestionsAnswered<20"
+        type="button" (click)="onNextClick()">Next</button>
+    <button class="btn btn-primary" *ngIf="standardError<=0.2 ||  noOfQuestionsAnswered>=20"
+        type="button" (click)="onFinishClick()">Finish</button>
 </div>
-<app-timer></app-timer>
-<button *ngIf="standardError>0.2" type="button" (click)="onNextClick()">Next</button>
-<button *ngIf="standardError<=0.2" type="button" (click)="onFinishClick()">Finish</button>

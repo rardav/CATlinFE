@@ -3,5 +3,8 @@ export interface Question {
     text: string;
     timeToAnswer: number;
     difficulty: number;
-    photoId: number;
+    imageId: number;
+    uniqueKey: string;
+    administratorId: number;
+    questionnaireId: number;
 }

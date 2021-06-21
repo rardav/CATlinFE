@@ -1,0 +1,176 @@
+section {
+   min-height: 100vh;
+}
+
+.loggedin-container {
+    position:relative;
+    border-radius: 15px;
+    margin: 0% 10% 5% 10%;
+    background-color: #e5e5e5;
+    height: auto;
+    padding: 3%;
+}
+
+.notloggedin-container {
+    position:relative;
+    border-radius: 15px;
+    margin: 0% 10% 5% 10%;
+    background-color: #e5e5e5;
+    height: auto;
+    padding: 3%;
+}
+
+table {
+    table-layout: fixed;
+}
+
+td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+table tr:nth-child(1){
+    counter-reset: rowNumber;
+}
+
+table tr{
+    counter-increment: rowNumber;
+}
+
+.counter::before {
+    content: counter(rowNumber);
+}
+
+.table-container{
+    overflow: auto;
+    height: 400px;
+}
+
+.table-container thead {
+    position: sticky; 
+    top: 0;
+    z-index: 1;
+}
+
+thead{
+    background-color: yellow;
+}
+
+.withquestions-container {
+    border: 2px solid black;
+    padding: 30px;
+}
+
+tr:hover {
+    cursor: pointer;
+}
+
+th:hover {
+    cursor: auto
+}
+
+img.img-thumbnail {
+    height: 100px;
+    min-width: 100px !important;
+    margin-bottom: 2px;
+}
+
+.nv-file-over {
+    border: dotted 3px red;
+}
+
+input[type=file] {
+    color: transparent;
+}
+
+img {
+    width: 400px !important;
+    height: 400px !important;
+}
+
+.form-range{
+    width: 90%;
+}
+
+.imageOfQuestionToBeUpdated-container {
+    border: 2px solid black ;
+}
+
+.title {
+    font-size: 100px;
+    text-align: center;
+}
+
+.description {
+    text-align: center;
+    height: 100%;
+    overflow: auto;
+}
+
+.must-be-logged-in {
+    margin-top: 1%;
+    text-align: center;
+}
+
+.not-available {
+    margin-top: 10%;
+    text-align: center;
+}
+
+.people-took-exam {
+    margin-top: 10%;
+    text-align: center;
+}
+
+.access-key-needed {
+    margin-top: 10%;
+    text-align: center;
+}
+
+.access-key-needed button {
+    margin-top: 2%;
+}
+
+.access-key-needed input {
+    max-width: 30%;
+    margin: 0 auto;
+}
+
+.generate-access-key {
+    margin-top: 10%;
+    text-align: center;
+}
+
+.generate-access-key select {
+    width: 100px;
+    margin: 0 auto;
+}
+
+.session-started-exam {
+    margin-top: 3%;
+}
+
+.supervisorsessionalreadystarted-container {
+    text-align: center;
+}
+
+.deadline {
+    margin-top: 5%;
+}
+
+.deadline h3{
+    font-size: 30px;
+}
+
+.generated-access-key {
+    margin-top: 5%;
+}
+
+.generated-access-key h1 {
+    font-size: 70px;
+    border: 5px solid #FCA311;
+    color: #FCA311;
+    width: 50%;
+    margin: 0 auto;
+}

@@ -1,0 +1,45 @@
+.top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3%;
+}
+
+countdown {
+    color: #e5e5e5;
+    border: 1px solid #e5e5e5;
+    font-size: 25px;
+    padding: 5px;
+}
+
+.userName {
+    color: #e3e3e3;
+    font-size: 25px;
+}
+
+button{
+    margin-top: 3%;
+    background-color: #FCA311;
+    color: #14213D;
+    border-color: #14213D;
+    border-radius: 50px;
+    width: 100px;
+    box-shadow: none;
+}
+
+button:hover{
+    background-color: #14213D;
+    color: #FCA311;
+    border-color: #FCA311;
+}
+
+button:active{
+    background-color: #14213D !important;
+    color: #FCA311 !important;
+    border-color: #FCA311 !important;
+    box-shadow: none !important;
+}
+
+button:focus{
+    box-shadow: none !important;
+}

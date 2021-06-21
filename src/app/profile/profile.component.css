@@ -1,8 +1,51 @@
+section {
+    min-height: 100vh;
+    width: 100%;
+    color: #14213D;
+}
+
+.container {
+    background-color: #e5e5e5;
+    border-radius: 20px;
+    margin: 2% auto;
+    padding: 3%;
+}
+
+.profile-data-container {
+    text-align: center;
+    margin-bottom: 6%;
+}
+
+.log-out {
+    text-align: right;
+}
+
+img {
+    margin-bottom: 2%;
+}
+
+button {
+    margin-top: 4%;
+    background-color: #FCA311;
+    color: #14213D;
+    border-color: #14213D;
+    border-radius: 50px;
+    width: 150px;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+button:hover {
+    background-color: #14213D;
+    color: #FCA311;
+
+}
+
 tr:hover {
     cursor: pointer;
 }
 
-table tr:nth-child(2){
+table tr:nth-child(1){
     counter-reset: rowNumber;
 }
 
@@ -12,4 +55,120 @@ table tr{
 
 .counter::before {
     content: counter(rowNumber);
+}
+
+.table-container{
+    overflow: auto;
+    height: 400px;
+}
+
+.table-container thead {
+    position: sticky; 
+    top: 0;
+    z-index: 1;
+}
+
+thead{
+    background-color: #FCA311;
+}
+
+.withsessions-container {
+    border: 2px solid #14213D;
+    padding: 30px;
+}
+
+.examinee-mark {
+    font-size: 100px;
+    font-weight: 500;
+    text-align: center;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 5px;
+    box-shadow: inset 0 0 10px #14213D;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #FCA311;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #f09703;
+}
+
+.modal-dialog {
+    background-color: #e5e5e5;
+}
+
+.modal-lg {
+    min-width: 60%;
+    padding: 3%;
+    border-radius: 20px;
+}
+
+.modal-lg thead {
+    background-color: #14213D;
+    color: #e5e5e5;
+}
+
+.modal-lg ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #14213D;
+}
+
+.modal-content {
+    background-color: #e5e5e5;
+    border: 0;
+}
+
+.modal-flex {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.first-row {
+    height: 50%;
+    width: 100%;
+}
+
+.first-column {
+    flex: 0 0 auto;
+    width: 50%;
+}
+
+.row {
+    margin: 0;
+}
+
+.second-column {
+    flex: 0 0 auto;
+    width: 50%;
+}
+
+.second-row {
+    height: 50%;
+    width: 100%;
+}
+
+.third-column {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 400px;
+}
+
+.lineChart {
+    margin-top: 50px;
+    height: 300px !important;
+    width: 900px;
 }

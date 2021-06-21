@@ -1,8 +1,26 @@
+@media (min-width: 1em) {
+    .card-columns {
+        -webkit-column-count: 1;
+        -moz-column-count: 1;
+        column-count: 1;
+    }
+
+    .col-9 {
+        flex-grow: 1;
+        max-width: 100%;
+    }
+}
+
 @media (min-width: 34em) {
     .card-columns {
         -webkit-column-count: 2;
         -moz-column-count: 2;
         column-count: 2;
+    }
+
+    .col-9 {
+        flex-grow: 1;
+        max-width: 100%;
     }
 }
 
@@ -12,12 +30,62 @@
         -moz-column-count: 3;
         column-count: 3;
     }
+    
+    .col-9 {
+        flex-grow: 1;
+        max-width: 100%;
+    }
 }
 
-.card:hover {
-    background-color: #FCA311;
+.container {
+    margin-top: 50px;
 }
 
-button:focus {
-    background-color: #FCA311;
+.card {
+    background-color: #14213D;
+}
+
+.list-group {
+    margin-bottom: 30px;
+}
+
+.list-title {
+    text-align: center;
+    color: #e5e5e5 !important;
+    border-bottom: 3px solid #e5e5e5;
+}
+
+.list-group-item {
+    background-color: #14213D;
+    text-align: center;
+    color: rgba(255,255,255,.5);
+    border: 0;
+    transition: 0.5s ease;
+}
+
+.list-group-item:hover{
+    cursor: pointer;
+    color: #e5e5e5;;
+}
+
+.list-title:hover{
+    cursor: default;
+}
+
+
+.card-columns {
+    margin-bottom: 60px;
+}
+
+.list-group-item.active {
+    color: #e5e5e5;
+    border: 0px;
+}
+
+a {
+    color: #14213D;
+}
+
+.list-group-item:focus {
+    border-color: 3px solid red;
 }

@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CountdownComponent, CountdownEvent } from 'ngx-countdown';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { Answer } from 'src/app/_models/answer';
@@ -29,6 +30,7 @@ export class ExamInProgressComponent implements OnInit {
     if(this.finishedExamination === false) $event.returnValue = true; 
     else $event.returnValue = false;
   }
+  @ViewChild('countdown') counter: CountdownComponent;
   
   individualSession: IndividualSession = {} as IndividualSession;
   user: User;
@@ -95,7 +97,14 @@ export class ExamInProgressComponent implements OnInit {
 
   //=========================================================== events
 
+  onTimerFinished(e: CountdownEvent) {
+    if(e.action === 'done') {
+      this.onNextClick();
+    }
+  }
+
   onNextClick() {
+    this.counter.restart();
     this.noOfQuestionsAnswered++;
 
     if (this.isChosenAnswerCorrect()) {
